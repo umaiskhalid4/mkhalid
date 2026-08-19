@@ -17,6 +17,14 @@
   --line:        #3a332a;
   --line-strong: #5c5140;
 
+  /* -- concrete (pillar graphic) — cool neutral greys, distinct from the
+     warm oxblood/bone palette above, sampled from board-formed brutalist
+     concrete in daylight -- */
+  --concrete-dark:  #201f1c;
+  --concrete-mid:   #423f3a;
+  --concrete-light: #625d54;
+  --concrete-edge:  #837c6f;
+
   /* -- type -- */
   --f-display: 'Cinzel', 'Georgia', serif;
   --f-body: 'Inter', -apple-system, 'Segoe UI', sans-serif;
@@ -86,6 +94,48 @@ body {
   transition: opacity 1.1s cubic-bezier(.16,.7,.2,1), transform 1.1s cubic-bezier(.16,.7,.2,1);
 }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ---------- pillar field (brutalist background graphic) ----------
+   A cluster of concrete tower silhouettes anchored to the bottom of a
+   section, confined to the side gutters outside the readable content
+   column so they never sit behind text. Each pillar rises into place
+   (scaleY 0 -> 1) the same way other [data-reveal] elements fade in, via
+   the existing IntersectionObserver in main.js — no extra JS needed.
+   Hidden below 1300px viewport width, where there's no gutter left to
+   hold them without crowding the text. */
+.pillar-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.pillar-field .pillar {
+  position: absolute;
+  bottom: 0;
+  height: var(--h, 200px);
+  background:
+    repeating-linear-gradient(to bottom, rgba(0,0,0,0.22) 0 2px, transparent 2px 24px),
+    linear-gradient(100deg, var(--concrete-dark) 0%, var(--concrete-mid) 40%, var(--concrete-light) 78%, var(--concrete-mid) 100%);
+  clip-path: polygon(0% 100%, 0% 20%, 50% 0%, 100% 20%, 100% 100%);
+  opacity: 0.9;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 1.6s cubic-bezier(.16,.7,.2,1);
+  box-shadow: inset 2px 0 0 rgba(131,124,111,0.35);
+}
+.pillar-field.is-visible .pillar { transform: scaleY(1); }
+.pillar-field .pillar:nth-child(1) { left: 1.5%;  width: 64px;  transition-delay: 0s; }
+.pillar-field .pillar:nth-child(2) { left: 7%;    width: 92px;  transition-delay: 0.15s; }
+.pillar-field .pillar:nth-child(3) { right: 6.5%; width: 80px;  transition-delay: 0.3s; }
+.pillar-field .pillar:nth-child(4) { right: 1%;   width: 54px;  transition-delay: 0.45s; }
+
+@media (max-width: 1300px) {
+  .pillar-field { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pillar-field .pillar { transition: none; transform: scaleY(1); }
+}
 
 /* ==========================================================================
    HEADER / NAV
@@ -232,55 +282,9 @@ body {
 }
 
 /* ==========================================================================
-   SEALS
-   ========================================================================== */
-.seals { background: var(--bg-panel); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.seal-grid {
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--edge) 6rem;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-}
-@media (max-width: 900px) { .seal-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .seal-grid { grid-template-columns: 1fr; } }
-
-.seal { text-align: center; padding: 1rem; }
-.seal-mark {
-  width: 118px; height: 118px;
-  margin: 0 auto 1.4rem;
-  border: 2px solid var(--accent);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-  background:
-    radial-gradient(circle at 50% 40%, rgba(217,88,63,0.10), transparent 70%),
-    var(--bg-panel-2);
-}
-.seal-mark::before {
-  content: "";
-  position: absolute; inset: 8px;
-  border: 1px solid var(--line-strong);
-  border-radius: 50%;
-}
-.seal-mark span {
-  font-family: var(--f-display);
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--ink);
-}
-.seal-label {
-  color: var(--ink-dim);
-  font-size: 0.88rem;
-  max-width: 26ch;
-  margin: 0 auto;
-}
-
-/* ==========================================================================
    ARTICLES / EXPERIENCE
    ========================================================================== */
-.articles { background: var(--bg); }
+.articles { background: var(--bg); border-top: 1px solid var(--line); position: relative; overflow: hidden; }
 .article-list {
   max-width: var(--container);
   margin: 0 auto;
