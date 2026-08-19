@@ -96,13 +96,22 @@ body {
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
 /* ---------- pillar field (brutalist background graphic) ----------
-   A cluster of concrete tower silhouettes anchored to the bottom of a
-   section, confined to the side gutters outside the readable content
-   column so they never sit behind text. Each pillar rises into place
-   (scaleY 0 -> 1) the same way other [data-reveal] elements fade in, via
-   the existing IntersectionObserver in main.js — no extra JS needed.
-   Hidden below 1300px viewport width, where there's no gutter left to
-   hold them without crowding the text. */
+   A cluster of monolithic concrete blocks, each built from a flat front
+   face plus two skewed pseudo-element faces (a lit top cap, a shadowed
+   side) so it reads as a real 3D quarried slab rather than a flat cutout
+   — no pointed apex, just a heavy rectangular monolith. Confined to the
+   side gutters outside the readable content column so pillars never sit
+   behind text. Sizes, positions, and small tilts are authored per
+   instance (inline style, per section) in irregular, unmatched clusters
+   rather than mirrored pairs — asymmetric massing, the way real
+   brutalist structures pile weight unevenly. Each section down the page
+   carries a bigger cluster than the last, so scrolling further — reading
+   more about the work — visibly builds a larger monument by the time you
+   reach the footer. Pillars rise into place (scaleY 0 -> 1) the same way
+   other [data-reveal] elements fade in, via the existing
+   IntersectionObserver in main.js — no extra JS needed. Hidden below
+   1560px viewport width, where there's no gutter left to hold blocks
+   this size without crowding the text. */
 .pillar-field {
   position: absolute;
   inset: 0;
@@ -111,30 +120,53 @@ body {
   z-index: 0;
 }
 .pillar-field .pillar {
+  --depth: 16px;
+  --tilt: 0deg;
   position: absolute;
   bottom: 0;
-  height: var(--h, 200px);
   background:
-    repeating-linear-gradient(to bottom, rgba(0,0,0,0.22) 0 2px, transparent 2px 24px),
-    linear-gradient(100deg, var(--concrete-dark) 0%, var(--concrete-mid) 40%, var(--concrete-light) 78%, var(--concrete-mid) 100%);
-  clip-path: polygon(0% 100%, 0% 20%, 50% 0%, 100% 20%, 100% 100%);
-  opacity: 0.9;
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 1.6s cubic-bezier(.16,.7,.2,1);
-  box-shadow: inset 2px 0 0 rgba(131,124,111,0.35);
+    repeating-linear-gradient(to bottom, rgba(0,0,0,0.22) 0 2px, transparent 2px 28px),
+    linear-gradient(100deg, var(--concrete-dark) 0%, var(--concrete-mid) 45%, var(--concrete-light) 78%, var(--concrete-mid) 100%);
+  opacity: 0.94;
+  transform: scaleY(0) rotate(var(--tilt));
+  transform-origin: bottom center;
+  transition: transform 2s cubic-bezier(.16,.7,.2,1);
+  box-shadow: inset -6px 0 12px rgba(0,0,0,0.4), 0 22px 40px rgba(0,0,0,0.5);
 }
-.pillar-field.is-visible .pillar { transform: scaleY(1); }
-.pillar-field .pillar:nth-child(1) { left: 1.5%;  width: 64px;  transition-delay: 0s; }
-.pillar-field .pillar:nth-child(2) { left: 7%;    width: 92px;  transition-delay: 0.15s; }
-.pillar-field .pillar:nth-child(3) { right: 6.5%; width: 80px;  transition-delay: 0.3s; }
-.pillar-field .pillar:nth-child(4) { right: 1%;   width: 54px;  transition-delay: 0.45s; }
+.pillar-field.is-visible .pillar { transform: scaleY(1) rotate(var(--tilt)); }
 
-@media (max-width: 1300px) {
+/* top cap — lit face, skewed to read as the block's flat top seen at an angle */
+.pillar-field .pillar::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--depth) * -0.87);
+  left: 0;
+  width: 100%;
+  height: var(--depth);
+  background: var(--concrete-edge);
+  filter: brightness(1.2);
+  transform: skewX(-45deg);
+  transform-origin: bottom left;
+}
+/* side face — shadowed face, gives the block its sense of depth */
+.pillar-field .pillar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: calc(var(--depth) * -0.87);
+  width: var(--depth);
+  height: 100%;
+  background: var(--concrete-dark);
+  filter: brightness(0.5);
+  transform: skewY(-45deg);
+  transform-origin: top left;
+}
+
+@media (max-width: 1560px) {
   .pillar-field { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pillar-field .pillar { transition: none; transform: scaleY(1); }
+  .pillar-field .pillar { transition: none; transform: scaleY(1) rotate(var(--tilt)); }
 }
 
 /* ==========================================================================
@@ -323,9 +355,34 @@ body {
 .article-body li { margin-bottom: 0.6rem; }
 .article-body li::marker { color: var(--accent-bright); }
 
+/* one employer, multiple roles — nested LinkedIn-style position group */
+.article-company { color: var(--accent-bright); font-weight: 600; margin: 0 0 1rem; font-size: 1.05rem; }
+.role-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  border-left: 2px solid var(--line);
+  padding-left: 1.2rem;
+  margin-left: 0.15rem;
+}
+.role-entry { position: relative; }
+.role-entry::before {
+  content: "";
+  position: absolute;
+  top: 0.4rem;
+  left: -1.45rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 0 3px var(--bg);
+}
+.role-entry .article-meta { margin-bottom: 0.8rem; }
+
 @media (max-width: 640px) {
   .article-block { grid-template-columns: 1fr; gap: 0.6rem; }
   .article-num { font-size: 1.4rem; }
+  .role-group { padding-left: 1rem; }
 }
 
 /* ==========================================================================
