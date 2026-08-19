@@ -355,34 +355,9 @@ body {
 .article-body li { margin-bottom: 0.6rem; }
 .article-body li::marker { color: var(--accent-bright); }
 
-/* one employer, multiple roles — nested LinkedIn-style position group */
-.article-company { color: var(--accent-bright); font-weight: 600; margin: 0 0 1rem; font-size: 1.05rem; }
-.role-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1.8rem;
-  border-left: 2px solid var(--line);
-  padding-left: 1.2rem;
-  margin-left: 0.15rem;
-}
-.role-entry { position: relative; }
-.role-entry::before {
-  content: "";
-  position: absolute;
-  top: 0.4rem;
-  left: -1.45rem;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent-bright);
-  box-shadow: 0 0 0 3px var(--bg);
-}
-.role-entry .article-meta { margin-bottom: 0.8rem; }
-
 @media (max-width: 640px) {
   .article-block { grid-template-columns: 1fr; gap: 0.6rem; }
   .article-num { font-size: 1.4rem; }
-  .role-group { padding-left: 1rem; }
 }
 
 /* ==========================================================================
